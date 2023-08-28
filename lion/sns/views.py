@@ -43,7 +43,7 @@ class FollowView(views.APIView):
             if qs.exists():
                 # unfollow
                 qs.delete()
-                return Response(status=status.HTTP_400_BAD_REQUEST)
+                return Response(status=status.HTTP_204_NO_CONTENT)
 
             else:
                 # follow
@@ -51,5 +51,17 @@ class FollowView(views.APIView):
                     follower=request.user,
                     following=following,
                 )
+                return Response(status=status.HTTP_201_CREATED)
         else:
             return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
+
+
+class FeedView(views.APIView):
+    def get(self, request, format=None):
+        # get all posts from users that the user is following
+        following_ids = Follow.objects.filter(follower=request.user).values_list(
+            "following", flat=True
+        )
+        posts = Post.objects.filter(user__in=following_ids)
+        serializer = PostSerializer(posts, many=True)
+        return Response(serializer.data)
