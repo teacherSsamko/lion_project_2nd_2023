@@ -40,6 +40,10 @@ INSTALLED_APPS = [
 ]
 
 INSTALLED_APPS += [
+    "rest_framework",
+]
+
+INSTALLED_APPS += [
     "sns",
 ]
 
