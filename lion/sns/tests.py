@@ -98,3 +98,29 @@ class PostTest(APITestCase):
         # check response
         self.assertEqual(response.status_code, status.HTTP_200_OK)
         self.assertEqual(len(response.data), post_n * 2)
+
+
+class FollowingTest(APITestCase):
+    @classmethod
+    def setUpTestData(cls):
+        cls.user = User.objects.create_user(username="main")
+        cls.user2 = User.objects.create_user(username="sub")
+
+    def test_get_user_list(self):
+        follwing = []
+        for i in range(1, 6):
+            user = User.objects.create_user(username=f"user{i}")
+            if i % 3 == 0:
+                Follow.objects.create(follower=self.user, following=user)
+                follwing.append(user.username)
+        self.client.force_login(self.user)
+        response = self.client.get(reverse("users"))
+        self.assertEqual(response.status_code, status.HTTP_200_OK)
+        all_users_except_main_n = User.objects.exclude(id=self.user.id).count()
+        self.assertEqual(len(response.data), all_users_except_main_n)
+        print(response.data)
+        for user in response.data:
+            if user["username"] in follwing:
+                self.assertEqual(user["following"], True)
+            else:
+                self.assertEqual(user["following"], False)

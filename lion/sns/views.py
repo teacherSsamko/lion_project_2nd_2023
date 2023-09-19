@@ -72,5 +72,5 @@ class UsersView(views.APIView):
     def get(self, request):
         # get users list except the current user
         users = User.objects.exclude(id=request.user.id)
-        serializer = UserSerializer(users, many=True)
+        serializer = UserSerializer(users, many=True, context={"request": request})
         return Response(serializer.data)

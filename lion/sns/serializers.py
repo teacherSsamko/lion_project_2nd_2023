@@ -23,5 +23,19 @@ class FollowSerializer(serializers.ModelSerializer):
 class UserSerializer(serializers.ModelSerializer):
     class Meta:
         model = User
-        fields = ("id", "username", "email", "first_name", "last_name")
-        read_only_fields = ("id", "username", "email", "first_name", "last_name")
+        fields = ("id", "username", "email", "first_name", "last_name", "following")
+        read_only_fields = (
+            "id",
+            "username",
+            "email",
+            "first_name",
+            "last_name",
+            "following",
+        )
+
+    following = serializers.SerializerMethodField()
+
+    def get_following(self, user) -> bool:
+        if Follow.objects.filter(follower=self.context["request"].user, following=user):
+            return True
+        return False
