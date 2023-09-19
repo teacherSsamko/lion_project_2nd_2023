@@ -80,6 +80,9 @@ class PostTest(APITestCase):
         )
 
     def test_get_following_posts(self):
+        hidden_post = Post.objects.create(
+            user=self.user2, content="hidden", hidden=True
+        )
         user3 = User.objects.create_user(username="user3")
         unfollowing_user = User.objects.create_user(username="unfollowing")
         # follow user2 and user3
@@ -118,7 +121,6 @@ class FollowingTest(APITestCase):
         self.assertEqual(response.status_code, status.HTTP_200_OK)
         all_users_except_main_n = User.objects.exclude(id=self.user.id).count()
         self.assertEqual(len(response.data), all_users_except_main_n)
-        print(response.data)
         for user in response.data:
             if user["username"] in follwing:
                 self.assertEqual(user["following"], True)

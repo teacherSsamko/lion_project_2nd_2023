@@ -7,7 +7,7 @@ from django.contrib.auth.models import User
 class PostSerializer(serializers.ModelSerializer):
     class Meta:
         model = Post
-        fields = ("id", "user", "content", "created_at", "updated_at")
+        fields = ("id", "user", "content", "created_at", "updated_at", "hidden")
 
 
 class FollowSerializer(serializers.ModelSerializer):

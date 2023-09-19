@@ -1,6 +1,6 @@
 from django.contrib.auth.models import User
-from rest_framework import viewsets, views
-from rest_framework import status
+from rest_framework import viewsets, views, status
+from rest_framework.decorators import action
 from rest_framework.response import Response
 
 from .models import Post, Follow
@@ -34,6 +34,13 @@ class PostViewSet(viewsets.ModelViewSet):
 
         return super().destroy(request, *args, **kwargs)
 
+    @action(detail=True, methods=["post"])
+    def hide(self, request, *args, **kwargs):
+        post: Post = self.get_object()
+        post.hidden = not post.hidden
+        post.save()
+        return Response(status=status.HTTP_200_OK)
+
 
 class FollowView(views.APIView):
     def post(self, request, format=None):
@@ -63,7 +70,7 @@ class FeedView(views.APIView):
         following_ids = Follow.objects.filter(follower=request.user).values_list(
             "following", flat=True
         )
-        posts = Post.objects.filter(user__in=following_ids)
+        posts = Post.objects.filter(user__in=following_ids).filter(hidden=False)
         serializer = PostSerializer(posts, many=True)
         return Response(serializer.data)
 
