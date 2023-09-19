@@ -1,9 +1,10 @@
+from django.contrib.auth.models import User
 from rest_framework import viewsets, views
-
-from .models import Post, Follow
-from .serializers import PostSerializer, FollowSerializer
 from rest_framework import status
 from rest_framework.response import Response
+
+from .models import Post, Follow
+from .serializers import PostSerializer, FollowSerializer, UserSerializer
 
 
 class PostViewSet(viewsets.ModelViewSet):
@@ -64,4 +65,12 @@ class FeedView(views.APIView):
         )
         posts = Post.objects.filter(user__in=following_ids)
         serializer = PostSerializer(posts, many=True)
+        return Response(serializer.data)
+
+
+class UsersView(views.APIView):
+    def get(self, request):
+        # get users list except the current user
+        users = User.objects.exclude(id=request.user.id)
+        serializer = UserSerializer(users, many=True)
         return Response(serializer.data)

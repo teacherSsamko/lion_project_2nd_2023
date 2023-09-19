@@ -10,4 +10,5 @@ router.register(r"posts", views.PostViewSet)
 urlpatterns = [
     path("follow/", views.FollowView.as_view(), name="follow"),
     path("feed/", views.FeedView.as_view(), name="feed"),
+    path("users/", views.UsersView.as_view(), name="users"),
 ] + router.urls
