@@ -10,6 +10,22 @@ class PostSerializer(serializers.ModelSerializer):
         fields = ("id", "user", "content", "created_at", "updated_at", "hidden")
 
 
+class PostUploadSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = Post
+        fields = (
+            "id",
+            "user",
+            "content",
+            "image",
+            "created_at",
+            "updated_at",
+            "hidden",
+        )
+
+    image = serializers.ImageField(required=False)
+
+
 class FollowSerializer(serializers.ModelSerializer):
     class Meta:
         model = Follow
